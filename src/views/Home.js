@@ -1,36 +1,18 @@
 import React, {Component, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, ImageBackground, Dimensions, TextInput, Image} from 'react-native';
-// eslint-disable-next-line no-undef
 windowWidth = Dimensions.get('window').width;
-// eslint-disable-next-line no-undef
 windowHeight = Dimensions.get('window').height;
-// eslint-disable-next-line no-undef
+
+import {updateEmail} from '../redux/actions/updateAction';
+
+import {useDispatch, useSelector} from 'react-redux';
+
 const Home = ({route, navigation}) => {
   const {params} = route;
-  const email = params && params.email ? params.email : '';
+  const info = useSelector((state) => state.personalInfo);
 
-  const [number, setNumber] = useState(0);
-  const [check, setCheck] = useState(false);
-  const [checkPause, setCheckPause] = useState(false);
-  const [checkReset, setCheckReset] = useState(false);
-
-  useEffect(() => {
-    if (check) {
-      const interval = setInterval(() => {
-        if (number < 100) {
-          setNumber((prevNumber) => prevNumber + 1);
-        }
-      }, 1000); // Mỗi giây
-      return () => clearInterval(interval);
-    }
-  }, [number, check, checkPause]);
-
-  const resetNumber = useEffect(() => {
-    if (checkReset == true) {
-      setNumber(0);
-    }
-    setCheckReset(false);
-  });
+  const [email, onChangeEmail] = useState('');
+  const dispatch = useDispatch();
 
   return (
     <View>
@@ -43,82 +25,43 @@ const Home = ({route, navigation}) => {
           <Text>Login page </Text>
         </View>
       </TouchableOpacity>
+      {/* home page */}
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Text>HOME PAGE</Text>
       </View>
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontWeight: 700}}>Chào :{email ? email : 'Khách'} </Text>
       </View>
-      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '10%'}}>
-        <Text style={{fontWeight: 700, fontSize: 30}}>{number}</Text>
+      {/* thông tin người dùng */}
+      <View style={{justifyContent: 'center', alignItems: 'center', paddingTop: '10%'}}>
+        <View>
+          <Text style={{fontWeight: '700', fontSize: 16}}>Personal Info</Text>
+          <Text>Name: {info.name}</Text>
+          <Text>Email: {info.email}</Text>
+          <Text>Address: {info.address}</Text>
+          <Text>Score:{info.score}</Text>
+        </View>
       </View>
-      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '10%'}}>
+      {/* hành động dispatch */}
+      <View>
+        <TextInput onChangeText={onChangeEmail} value={email} style={{height: 40, margin: 12, borderWidth: 1}} />
+      </View>
+      {/* nút cập nhật */}
+      <View style={{justifyContent: 'center', alignItems: 'center', paddingTop: '1%'}}>
         <TouchableOpacity
           onPress={() => {
-            if (!check) {
-              setCheck(true);
-            }
+            dispatch(updateEmail(email));
+          }}
+          style={{
+            borderRadius: 40,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 100,
+            height: 40,
+            borderWidth: 1,
+            padding: 10,
           }}>
-          <Text
-            style={{
-              fontWeight: 700,
-              fontSize: 15,
-              paddingLeft: 34,
-              paddingRight: 34,
-              borderRadius: 20,
-              paddingTop: 15,
-              paddingBottom: 15,
-              backgroundColor: 'green',
-            }}>
-            Đếm số
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '10%'}}>
-        <TouchableOpacity
-          onPress={() => {
-            if (checkPause == false) {
-              setCheckPause(true);
-            }
-          }}>
-          <Text
-            style={{
-              fontWeight: 700,
-              fontSize: 15,
-              paddingLeft: 28,
-              paddingRight: 28,
-              borderRadius: 20,
-              paddingTop: 15,
-              paddingBottom: 15,
-              backgroundColor: 'green',
-            }}>
-            Dừng đếm
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '10%'}}>
-        <TouchableOpacity
-          onPress={() => {
-            if (checkReset == false) {
-              setCheckReset(true);
-              resetNumber;
-            }
-          }}>
-          <Text
-            style={{
-              fontWeight: 700,
-              fontSize: 15,
-              paddingLeft: 28,
-              paddingRight: 28,
-              borderRadius: 20,
-              paddingTop: 15,
-              paddingBottom: 15,
-              backgroundColor: 'green',
-            }}>
-            Reset đếm
-          </Text>
+          <Text>Cập nhật</Text>
         </TouchableOpacity>
       </View>
     </View>
